@@ -4,7 +4,7 @@ class Format {
 
         let div = document.createElement('div');
 
-        div.innerHTML = '<div data-${text}="id"></div>'
+        div.innerHTML = `<div data-${text}="id"></div>`
 
 
 
