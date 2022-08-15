@@ -115,6 +115,8 @@ class WhatsAppController {
                 'height': '100%'
             })
 
+            this._camera = new CameraController(this.el.videoCamera);
+
         })
 
         this.el.btnTakePicture.on('click', e => {
@@ -233,13 +235,34 @@ class WhatsAppController {
                 img.dataset.unicode = emoji.dataset.unicode;
                 img.alt = emoji.dataset.unicode;
 
-                emoji.classList.forEach(name=>{
+                emoji.classList.forEach(name => {
 
                     img.classList.add(name)
 
                 })
 
-                this.el.inputText.appendChild(img);
+
+                let cursor = window.getSelection();
+
+                if (!cursor.focusNode || !cursor.focusNode.id == 'input-text') {
+
+                    this.el.inputText.focus();
+                    cursor = window.getSelection();
+
+                }
+
+                let range = document.createRange();
+
+                range = cursor.getRangeAt(0);
+                range.deleteContents();
+
+                let frag = document.createDocumentFragment();
+
+                frag.appendChild(img);
+
+                range.insertNode(frag);
+
+                range.setStartAfter(img);
 
                 this.el.inputText.dispatchEvent(new Event('keyup'))
 
