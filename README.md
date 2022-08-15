@@ -1,8 +1,8 @@
 # Projeto WhatsApp Clone
 
-[![Hcode Treinamentos](https://www.hcode.com.br/res/img/hcode-200x100.png)](https://www.hcode.com.br)
+[![Demerson](https://www.linkedin.com/in/demerson-guilherme-190774218/)]()
 
-Projeto desenvolvido pro Demerson "demershow" Guilherme
+Projeto desenvolvido por Demerson "demershow" Guilherme
 
 ### Projeto
 ![WhatsApp Clone](https://firebasestorage.googleapis.com/v0/b/hcode-com-br.appspot.com/o/whatsapp.jpg?alt=media&token=5fc78e3b-4871-424f-abfa-b765f2515d0c)
