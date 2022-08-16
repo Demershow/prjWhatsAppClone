@@ -1,6 +1,7 @@
 // import { timeStamp } from 'console';
 import { Format } from './../util/format.js'
 import { CameraController } from './CameraController.js'
+import { MicrophoneController } from './MicrophoneController.js'
 import { DocumentPreviewController } from './DocumentPreviewController.js'
 
 
@@ -247,17 +248,37 @@ export class WhatsAppController {
 
             this.el.recordMicrophone.show();
             this.el.btnSendMicrophone.hide();
-            this.startRecordMicrophoneTime();
+
+
+            this._microphoneController = new MicrophoneController();
+
+            this._microphoneController.on('ready', audio=>{
+
+                console.log("recebido", );
+
+                this._microphoneController.startRecorder();
+
+            })
+
+   
+            this._microphoneController.on('timer', (data, event) => {
+
+                this.el.recordMicrophoneTimer.innerHTML = data.displayTimer;
+    
+            });
 
         })
 
         this.el.btnCancelMicrophone.on('click', e => {
 
-            this.closeRecordMicrophone()
+            this._microphoneController.stopRecorder();
+            this.closeRecordMicrophone();
+            
 
         })
         this.el.btnFinishMicrophone.on('click', e => {
 
+            this._microphoneController.stopRecorder();
             this.closeRecordMicrophone()
 
         })
@@ -353,24 +374,13 @@ export class WhatsAppController {
 
     }
 
-    startRecordMicrophoneTime() {
-
-        let start = Date.now();
-
-        this._recordMicrophoneInterval = setInterval(() => {
-
-
-            this.el.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now() - start)
-
-        }, 100)
-
-    }
+  
 
     closeRecordMicrophone() {
 
         this.el.recordMicrophone.hide();
         this.el.btnSendMicrophone.show();
-        clearInterval(this._recordMicrophoneInterval);
+  
 
     }
 

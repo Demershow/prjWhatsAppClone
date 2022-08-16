@@ -59,7 +59,10 @@ export class DocumentPreviewController {
                                 canvas.width = viewport.width;
 
                                 page.render({ canvasContext, viewport }).then(() => {
+
                                     let _s = (pdf.numPages > 1) ? 's' : '';
+
+                                    
                                     s({
                                         src: canvas.toDataURL('image/png'), 
                                         info: `${pdf.numPages} página${_s}`
