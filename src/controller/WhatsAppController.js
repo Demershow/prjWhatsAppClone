@@ -118,17 +118,41 @@ export class WhatsAppController {
             }
 
         })
-        this.el.btnSavePanelEditProfile.on('click', e => [
+        this.el.btnSavePanelEditProfile.on('click', e => {
+            this.el.btnSavePanelEditProfile.disabled =  true;
 
-            console.log(this.el.inputNamePanelEditProfile.innerHTML)
+            this._user.name = this.el.inputNamePanelEditProfile.innerHTML
+            this._user.save().then(()=>{
 
-        ])
+                this.el.btnSavePanelEditProfile.disabled =  false;
+            })
+
+    })
 
         this.el.formPanelAddContact.on('submit', e => {
 
             e.preventDefault();
 
             let formData = new FormData(this.el.formPanelAddContact)
+
+            let contact = new User(formData.get('email'));
+
+            contact.on('datachange', data=>{
+
+                if(data.name){
+
+                    this._user.addContact(contact).then(()=>{
+                       this.el.btnClosePanelAddContact.click();
+                        console.info('contato adicionado');
+                    });
+
+                }else{
+                    console.error('Usuario n foi encontrado')
+                }
+
+            })
+
+            
 
         })
 
