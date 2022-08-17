@@ -3,20 +3,71 @@ import { Format } from './../util/format.js'
 import { CameraController } from './CameraController.js'
 import { MicrophoneController } from './MicrophoneController.js'
 import { DocumentPreviewController } from './DocumentPreviewController.js'
-import {Firebase} from './../util/Firebase'
+import { Firebase } from './../util/Firebase'
+import { User } from '../model/User.js'
 
 
 export class WhatsAppController {
 
     constructor() {
-
+        
+        this._firebase = new Firebase();
         console.log('WhatsAppController OK')
-
+        this.initAuth();
         this.elementsPrototype();
         this.loadElements();
         this.initEvents();
 
-        this._firebase = new Firebase();
+        
+    }
+
+    initAuth(){
+
+        this._firebase.initAuth().then(response=>{
+
+            this._user = new User(response.user.email);
+
+            this._user.on('datachange', data =>{
+
+                document.querySelector('title').innerHTML = data.name + ' - WhatsApp Clone';
+                this.el.inputNamePanelEditProfile.innerHTML = data.name
+
+                if(data.photo) {
+
+                    let photo = this.el.imgPanelEditProfile;
+                    photo.src = data.photo;
+                    photo.show();
+                    this.el.imgDefaultPanelEditProfile.hide();
+
+                    let photo2 = this.el.myPhoto.querySelector('img');
+                    photo2.src = data.photo;
+                    photo2.show();
+
+                }
+
+                
+
+            })
+            this._user.name = response.user.displayName;
+            this._user.email = response.user.email;
+            this._user.photo = response.user.photoURL;
+
+            this._user.save().then(()=>{
+
+                this.el.appContent.css({
+                    display:'flex'
+            });
+            })
+
+           
+
+        }).catch(err=>{
+
+            console.log(err)
+
+        })
+
+
     }
     initEvents() {
 
@@ -202,18 +253,18 @@ export class WhatsAppController {
                         case 'application/vnd.mds-powerpoint':
                         case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
                             this.el.iconPanelDocumentPreview.className = 'jcxhw icon-doc-ppt'
-                        break;
+                            break;
 
                         case 'application/msword':
                         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
                             this.el.iconPanelDocumentPreview.className = 'jcxhw icon-doc-doc'
-                        break;
+                            break;
 
                         default:
                             this.el.iconPanelDocumentPreview.className = 'jcxhw icon-doc-generic'
-                        break;
+                            break;
 
-                        
+
 
                     }
                     this.el.filenamePanelDocumentPreview.innerHTML = file.name;
@@ -255,19 +306,19 @@ export class WhatsAppController {
 
             this._microphoneController = new MicrophoneController();
 
-            this._microphoneController.on('ready', audio=>{
+            this._microphoneController.on('ready', audio => {
 
-                console.log("recebido", );
+                console.log("recebido",);
 
                 this._microphoneController.startRecorder();
 
             })
 
-   
+
             this._microphoneController.on('timer', (data, event) => {
 
                 this.el.recordMicrophoneTimer.innerHTML = data.displayTimer;
-    
+
             });
 
         })
@@ -276,7 +327,7 @@ export class WhatsAppController {
 
             this._microphoneController.stopRecorder();
             this.closeRecordMicrophone();
-            
+
 
         })
         this.el.btnFinishMicrophone.on('click', e => {
@@ -377,13 +428,13 @@ export class WhatsAppController {
 
     }
 
-  
+
 
     closeRecordMicrophone() {
 
         this.el.recordMicrophone.hide();
         this.el.btnSendMicrophone.show();
-  
+
 
     }
 
