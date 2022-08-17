@@ -20,6 +20,9 @@ export class User extends Model{
     get photo() {return this._data.photo; }
     set photo(value) { this._data.photo = value; }
 
+    get chatID() {return this._data.chatID; }
+    set chatID(value) { this._data.chatID = value; }
+
     getById(id){
 
         return new Promise ((s, f)=>{
