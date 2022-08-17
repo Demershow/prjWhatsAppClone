@@ -6,6 +6,7 @@ import { DocumentPreviewController } from './DocumentPreviewController.js'
 import { Firebase } from './../util/Firebase'
 import { User } from '../model/User.js'
 import { Chat } from '../model/Chat.js'
+import { Message } from '../model/Message.js'
 
 
 export class WhatsAppController {
@@ -145,21 +146,8 @@ export class WhatsAppController {
 
                 div.on('click', e=>{
 
-                    console.log('chat id:', contact.chatID);
-
-                    this.el.activeName.innerHTML = contact.name;
-                    this.el.activeStatus.innerHTML = contact.status;
-
-                    if(contact.photo){
-                        let img = this.el.activePhoto;
-                        img.src = contact.photo;
-                        img.show();
-                    }
-
-                    this.el.home.hide();
-                    this.el.main.css({
-                        display:'flex'
-                    })
+                    this.setActiveChat(contact);
+                    
 
                 })
 
@@ -246,7 +234,7 @@ export class WhatsAppController {
                     Chat.createIfNotExists(this._user.email, contact.email).then(chat=>{
 
                         contact.chatId = chat.id;
-
+                      
                         this._user.chatId = chat.id;
 
                         contact.addContact(this._user);
@@ -506,6 +494,17 @@ export class WhatsAppController {
 
         this.el.btnSend.on('click', e => {
 
+            Message.send(
+                this._contactActive.chatId,
+                this._user.email,
+                'text',
+                this.el.inputText.innerHTML
+                 );
+
+            this.el.inputText.innerHTML = '';
+
+            this.el.panelEmojis.removeClass('open');
+
             console.log(this.el.inputText.innerHTML)
 
         })
@@ -610,6 +609,25 @@ export class WhatsAppController {
 
         })
 
+    }
+
+    setActiveChat(contact){
+
+        this._contactActive = contact;
+
+                    this.el.activeName.innerHTML = contact.name;
+                    this.el.activeStatus.innerHTML = contact.status;
+
+                    if(contact.photo){
+                        let img = this.el.activePhoto;
+                        img.src = contact.photo;
+                        img.show();
+                    }
+
+                    this.el.home.hide();
+                    this.el.main.css({
+                        display:'flex'
+                    })
     }
 
     elementsPrototype() {

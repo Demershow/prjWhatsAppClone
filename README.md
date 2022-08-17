@@ -1,7 +1,5 @@
 # Projeto WhatsApp Clone
 
-[![Demerson](https://www.linkedin.com/in/demerson-guilherme-190774218/)]()
-
 Projeto desenvolvido por Demerson "demershow" Guilherme
 
 ### Projeto
@@ -9,7 +7,7 @@ Projeto desenvolvido por Demerson "demershow" Guilherme
 
 ### Recursos Usados
 
-<!-- Lista de recursos usados em aula para este projeto
+Lista de recursos usados em aula para este projeto
 
 | Recurso | Link |
 | ------ | ------ |
@@ -19,4 +17,4 @@ Projeto desenvolvido por Demerson "demershow" Guilherme
 | Cloud Functions | https://firebase.google.com/docs/functions/?hl=pt-br |
 | Cloud Storage | https://firebase.google.com/docs/storage/?authuser=0 |
 | PDF.js | https://mozilla.github.io/pdf.js/ |
-| MediaDevices.getUserMedia() | https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia | -->
+| MediaDevices.getUserMedia() | https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia |
