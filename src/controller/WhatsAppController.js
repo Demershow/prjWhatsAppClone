@@ -118,7 +118,7 @@ export class WhatsAppController {
         
                             <span class="_2_LEW last-message">
                                 <div class="_1VfKB">
-                                    <span data-icon="status-dblcheck" class="">
+                                    <span data-icon="msg-time" class="">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18">
                                             <path fill="#263238" fill-opacity=".4" d="M17.394 5.035l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-.427-.388a.381.381 0 0 0-.578.038l-.451.576a.497.497 0 0 0 .043.645l1.575 1.51a.38.38 0 0 0 .577-.039l7.483-9.602a.436.436 0 0 0-.076-.609zm-4.892 0l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-2.614-2.556a.435.435 0 0 0-.614.007l-.505.516a.435.435 0 0 0 .007.614l3.887 3.8a.38.38 0 0 0 .577-.039l7.483-9.602a.435.435 0 0 0-.075-.609z">
                                             </path>
@@ -645,28 +645,35 @@ export class WhatsAppController {
                 docs.forEach(doc => {
                     let data = doc.data();
                     data.id = doc.id;
+                
 
+                    let message = new Message();
+
+                    message.fromJSON(data);
+
+                    
+                    let me = (data.from === this._user.email);
 
 
                     if (!this.el.panelMessagesContainer.querySelector('#_' + data.id)) {
 
-
-
-
-
-                        let message = new Message();
-
-                        message.fromJSON(data);
-
-                        let me = (data.from === this._user.email);
+                        if (!me) {
+                            doc.ref.set({
+                                status:"read"
+                            },{
+                                merge:true
+                            })
+                        }
 
                         let view = message.getViewElement(me);
 
                         this.el.panelMessagesContainer.appendChild(view);
 
 
-
-                    }
+                    }else if (me){
+                        let msgEl = this.el.panelMessagesContainer.querySelector('#_' + data.id);
+                        msgEl.querySelector('.message-status').innerHTML = message.getStatusViewElement().outerHTML;
+                    }   
 
                 });
                 if (autoScroll){
