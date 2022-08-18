@@ -144,10 +144,11 @@ export class WhatsAppController {
                     img.show();
                 }
 
-                div.on('click', e=>{
+                div.on('click', e => {
 
                     this.setActiveChat(contact);
-                    
+                    console.log('chatid: ', contact.chatId)
+
 
                 })
 
@@ -223,40 +224,31 @@ export class WhatsAppController {
             e.preventDefault();
 
             let formData = new FormData(this.el.formPanelAddContact)
-
             let contact = new User(formData.get('email'));
 
             contact.on('datachange', data => {
-                
-                
+
                 if (data.name) {
 
-                    Chat.createIfNotExists(this._user.email, contact.email).then(chat=>{
-
+                    Chat.createIfNotExists(this._user.email, contact.email).then(chat => {
                         contact.chatId = chat.id;
-                      
                         this._user.chatId = chat.id;
-
                         contact.addContact(this._user);
 
                         this._user.addContact(contact).then(() => {
                             this.el.btnClosePanelAddContact.click();
                             console.info('contato adicionado');
+                       
+                        
                         });
-                         
+
                     })
 
-                    
-
                 } else {
-                    console.error('Usuario n foi encontrado')
+                    console.info('usuário não encontrado');
                 }
-
-            })
-
-
-
-        })
+            });
+        });
 
         this.el.contactsMessagesList.querySelectorAll('.contact-item').forEach(item => {
 
@@ -493,21 +485,17 @@ export class WhatsAppController {
         });
 
         this.el.btnSend.on('click', e => {
-
             Message.send(
                 this._contactActive.chatId,
                 this._user.email,
                 'text',
                 this.el.inputText.innerHTML
-                 );
-
+            );
             this.el.inputText.innerHTML = '';
-
             this.el.panelEmojis.removeClass('open');
-
             console.log(this.el.inputText.innerHTML)
+        });
 
-        })
 
         this.el.btnEmojis.on('click', e => {
 
@@ -611,24 +599,56 @@ export class WhatsAppController {
 
     }
 
-    setActiveChat(contact){
+    setActiveChat(contact) {
+
+        if(this._contactActive) {
+
+            Message.getRef(this._contactActive.chatId).onSnapshot(()=>{})
+
+        }
 
         this._contactActive = contact;
 
-                    this.el.activeName.innerHTML = contact.name;
-                    this.el.activeStatus.innerHTML = contact.status;
+        this.el.activeName.innerHTML = contact.name;
+        this.el.activeStatus.innerHTML = contact.status;
 
-                    if(contact.photo){
-                        let img = this.el.activePhoto;
-                        img.src = contact.photo;
-                        img.show();
-                    }
+        if (contact.photo) {
+            let img = this.el.activePhoto;
+            img.src = contact.photo;
+            img.show();
+        }
 
-                    this.el.home.hide();
-                    this.el.main.css({
-                        display:'flex'
-                    })
-    }
+        this.el.home.hide();
+        this.el.main.css({
+            display: 'flex'
+        })
+
+        Message.getRef(this._contactActive.chatId).orderBy('timeStamp')
+        .onSnapshot(docs =>{
+            this.el.panelMessagesContainer.innerHTML = '';
+
+            docs.forEach(doc => {
+                let data = doc.data();
+                data.id = doc.id;
+
+
+
+               if (!this.el.panelMessagesContainer.querySelector('#_' + data.id)){
+
+                let message = new Message();
+
+                message.fromJSON(data);
+
+                let me = (data.from === this._user.email);
+
+                let view = message.getViewElement(me);
+
+                this.el.panelMessagesContainer.appendChild(view);
+               }
+
+            });
+        });
+}
 
     elementsPrototype() {
 
