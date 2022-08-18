@@ -238,8 +238,8 @@ export class WhatsAppController {
                         this._user.addContact(contact).then(() => {
                             this.el.btnClosePanelAddContact.click();
                             console.info('contato adicionado');
-                       
-                        
+
+
                         });
 
                     })
@@ -601,9 +601,9 @@ export class WhatsAppController {
 
     setActiveChat(contact) {
 
-        if(this._contactActive) {
+        if (this._contactActive) {
 
-            Message.getRef(this._contactActive.chatId).onSnapshot(()=>{})
+            Message.getRef(this._contactActive.chatId).onSnapshot(() => { })
 
         }
 
@@ -622,33 +622,52 @@ export class WhatsAppController {
         this.el.main.css({
             display: 'flex'
         })
+        this.el.panelMessagesContainer.innerHTML = '';
 
-        Message.getRef(this._contactActive.chatId).orderBy('timeStamp')
-        .onSnapshot(docs =>{
-            this.el.panelMessagesContainer.innerHTML = '';
+        Message.getRef(this._contactActive.chatId).orderBy('timeStamp').onSnapshot(docs => {
+                this.el.panelMessagesContainer.innerHTML = '';
 
-            docs.forEach(doc => {
-                let data = doc.data();
-                data.id = doc.id;
+                let scrollTop = this.el.panelMessagesContainer.scrollTop;
+                let scrollTopMax = (this.el.panelMessagesContainer.scrollHeight -
+                this.el.panelMessagesContainer.offsetHeight);
+                let autoScroll = (scrollTop >= scrollTopMax);
+
+                docs.forEach(doc => {
+                    let data = doc.data();
+                    data.id = doc.id;
 
 
 
-               if (!this.el.panelMessagesContainer.querySelector('#_' + data.id)){
+                    if (!this.el.panelMessagesContainer.querySelector('#_' + data.id)) {
 
-                let message = new Message();
 
-                message.fromJSON(data);
 
-                let me = (data.from === this._user.email);
 
-                let view = message.getViewElement(me);
 
-                this.el.panelMessagesContainer.appendChild(view);
-               }
+                        let message = new Message();
 
+                        message.fromJSON(data);
+
+                        let me = (data.from === this._user.email);
+
+                        let view = message.getViewElement(me);
+
+                        this.el.panelMessagesContainer.appendChild(view);
+
+
+
+                    }
+
+                });
+                if (autoScroll){
+                    this.el.panelMessagesContainer.scrollTop =
+                    (this.el.panelMessagesContainer.scrollHeight -
+                        this.el.panelMessagesContainer.offsetHeight);
+                }  else {
+                    this.el.panelMessagesContainer.scrollTop = scrollTop;
+                }  
             });
-        });
-}
+    }
 
     elementsPrototype() {
 
