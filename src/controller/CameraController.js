@@ -24,11 +24,8 @@ export class CameraController {
     stop(){
 
         this._stream.getTracks().forEach(track => {
-
             track.stop();
-
         });
-
     }
     takePicture(mimeType = 'image/png'){
 
