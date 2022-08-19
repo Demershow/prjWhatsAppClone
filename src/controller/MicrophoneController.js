@@ -67,7 +67,7 @@ export class MicrophoneController extends ClassEvent {
 
             this._mediaRecorder = new MediaRecorder(this._stream, Object.assign(options, {
                 mimeType: 'audio/webm'
-            }));
+            }));    
 
             this._recordedChunks = [];
 
@@ -83,13 +83,13 @@ export class MicrophoneController extends ClassEvent {
                     type: 'audio/webm'
                 });
 
-                let cx = new AudioContext();
+                let audioContext = new AudioContext();
 
                 var fileReader = new FileReader();
                 
                 fileReader.onload = e => {
 
-                    cx.decodeAudioData(fileReader.result).then(decode => {
+                    audioContext.decodeAudioData(fileReader.result).then(decode => {
 
                         let file = new File([blob], 'rec' + new Date().getTime() + '.webm', {
                             type: 'audio/webm',

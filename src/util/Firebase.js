@@ -3,25 +3,19 @@ require('firebase/firestore');
 
 export class Firebase {
 
-    constructor(){
+    constructor() {
 
         this._config = {
-            apiKey: "AIzaSyB6e942V2boX1dnfCciyHPjzRvvUAvXMNw",
-            authDomain: "whatsappclone-baaa9.firebaseapp.com",
-            projectId: "whatsappclone-baaa9",
-            storageBucket: "gs://whatsappclone-baaa9.appspot.com",
-            messagingSenderId: "986325085371",
-            appId: "1:986325085371:web:127f0c2bedd019c84acd9e",
-            measurementId: "G-E6V8NWKQ01"
-          };
-        
+            //firebase config goes here
+        };
+
         this.init()
 
     }
 
-    init(){
+    init() {
 
-        if(!window._initializedFirebase){
+        if (!window._initializedFirebase) {
             firebase.initializeApp(this._config)
 
             firebase.firestore().settings({
@@ -32,33 +26,33 @@ export class Firebase {
             window._initializedFirebase = true;
         }
 
-       
+
 
     }
 
-    static db(){
+    static db() {
 
         return firebase.firestore();
     }
 
-    static hd (){
+    static hd() {
 
         return firebase.storage();
     }
 
-    initAuth(){
+    initAuth() {
 
-        return new Promise((s, f) =>{
+        return new Promise((s, f) => {
             let provider = new firebase.auth.GoogleAuthProvider();
 
-            firebase.auth().signInWithPopup(provider).then(result =>{
+            firebase.auth().signInWithPopup(provider).then(result => {
                 let token = result.credential.accessToken;
                 let user = result.user;
                 s({
                     user,
                     token
                 });
-            }).catch(err=>{
+            }).catch(err => {
                 f(err);
             })
         })

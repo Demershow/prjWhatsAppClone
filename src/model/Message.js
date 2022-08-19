@@ -2,6 +2,7 @@ import { Firebase } from "../util/Firebase";
 import { Upload } from "../util/Upload";
 import { Model } from "./Model";
 import { Format } from "../util/format";
+import { Base64 } from "../util/base64";
 
 
 export class Message extends Model {
@@ -58,7 +59,7 @@ export class Message extends Model {
         switch (this.type) {
             case 'contact':
                 div.innerHTML = `
-                                            <div class="_3_7SH kNKwo tail" id="_${this.id}">
+                                            <div class="_3_7SH kNKwo tail">
                                                 <span class="tail-container"></span>
                                                 <span class="tail-container highlight"></span>
                                                 <div class="_1YNgi copyable-text">
@@ -86,7 +87,7 @@ export class Message extends Model {
                                                         </div>
                                                         <div class="_3a5-b">
                                                             <div class="_1DZAH" role="button">
-                                                                <span class="message-time"></span>
+                                                                <span class="message-time">${Format.timeStampTotime(this.timeStamp)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -115,7 +116,7 @@ export class Message extends Model {
                                                             <div class="_34Olu">
                                                                 <div class="_2BzIU">
                                                                     <div class="_2X3l6">
-                                                                        <svg class="_1UDDE" width="50" height="50" viewBox="0 0 43 43">
+                                                                        <svg class="_1UDDE" audio-load width="50" height="50" viewBox="0 0 43 43">
                                                                             <circle class="_3GbTq _2wGBy" cx="21.5" cy="21.5" r="20" fill="none" stroke-width="3"></circle>
                                                                         </svg>
                                                                     </div>
@@ -134,7 +135,7 @@ export class Message extends Model {
                                                         </div>
                                                         <div class="_2TvOE">
                                                             <div class="_1DZAH text-white" role="button">
-                                                                <span class="message-time"></span>
+                                                                <span class="message-time">${Format.timeStampTotime(this.timeStamp)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -198,7 +199,7 @@ export class Message extends Model {
                                                     </div>
                                                     <div class="_3Lj_s">
                                                         <div class="_1DZAH" role="button">
-                                                            <span class="message-time"></span>
+                                                            <span class="message-time">${Format.timeStampTotime(this.timeStamp)}</span>
                                                            
                                                         </div>
                                                     </div>
@@ -280,7 +281,7 @@ export class Message extends Model {
                                                     </div>
                                                     <div class="_27K_5">
                                                         <div class="_1DZAH" role="button">
-                                                            <span class="message-time"></span>
+                                                            <span class="message-time">${Format.timeStampTotime(this.timeStamp)}</span>
                                                            
                                                         </div>
                                                     </div>
@@ -325,7 +326,7 @@ export class Message extends Model {
                 }
 
                 audioEl.onended = e => {
-                    console.log('onended');
+                    console.log('carregado');
                     audioEl.currentTime = 0;
                 }
 
@@ -367,7 +368,7 @@ export class Message extends Model {
                                                     </div>
                                                     <div class="_2f-RV">
                                                         <div class="_1DZAH">
-                                                            <span class="message-time"></span>
+                                                            <span class="message-time">${Format.timeStampTotime(this.timeStamp)}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -405,6 +406,43 @@ export class Message extends Model {
         });
     }
 
+
+
+    static sendDocument(chatId, from, file, filePreview) {
+
+        Message.send(chatId, from, 'document').then(msgRef => {
+
+
+            Message.upload(file).then(snapshot => {
+                let downloadFile = snapshot.downloadURL;
+
+                Message.upload(filePreview).then(snapshot2 => {
+
+                    let downloadPreview = snapshot2.downloadURL;
+
+                    msgRef.set({
+                        content: downloadFile,
+                        preview: downloadPreview,
+                        filename: file.name,
+                        size: file.size,
+                        filetype: file.type,
+                        status: 'sent'
+                    }, {
+                        merge: true
+                    })
+                })
+            })
+
+
+        })
+
+
+
+
+    }
+
+
+
     static sendImage(chatId, from, file) {
 
 
@@ -432,6 +470,7 @@ export class Message extends Model {
     static sendContact(chatId, from, contact) {
         return Message.send(chatId, from, 'contact', contact);
     }
+
 
     static sendDocument(chatId, from, file, filePreview, info) {
         Message.send(chatId, from, 'document', '').then(msgRef => {

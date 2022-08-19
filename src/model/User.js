@@ -50,11 +50,9 @@ export class User extends Model{
     }
 
     static getContactsRef(id){
-    
         return User.getRef()
         .doc(id)
         .collection('contacts')
-
     }
 
     static findEmail(email){
@@ -72,25 +70,18 @@ export class User extends Model{
     }
 
     getContacts(filter = ''){
-
-        return new Promise ((s,f)=>{
-
-            User.getContactsRef(this.email).where('name', '>=', filter).onSnapshot(docs=>{
+        return new Promise((s,f) =>{
+            User.getContactsRef(this.email).where('name', '>=', filter).onSnapshot(docs => {
                 let contacts = [];
 
-                docs.forEach(doc =>{
-
+                docs.forEach(doc => {
                     let data = doc.data();
                     data.id = doc.id;
-
                     contacts.push(data);
                 });
                 this.trigger('contactschange', docs)
                 s(contacts);
             });
         })
-
     }
-
-
 }
